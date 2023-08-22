@@ -1,10 +1,7 @@
-import 'package:dm_mobile/models/shop/shop.dart';
-import 'package:dm_mobile/providers/shop_provider.dart';
-import 'package:dm_mobile/screens/logIn-screen.dart';
-import 'package:dm_mobile/screens/search_page.dart';
-import 'package:dm_mobile/screens/shop_register_screen.dart';
+import 'package:cron/cron.dart';
+import 'package:dm_mobile/models/business/business.dart';
 import 'package:dm_mobile/screens/verification_screen.dart';
-import 'package:dm_mobile/screens/message_list_screen.dart';
+import 'package:dm_mobile/services/cron_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -12,10 +9,13 @@ import 'package:provider/provider.dart';
 import 'providers/message_notifier.dart';
 import 'models/message/message.dart';
 
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  CronService().startScheduler();
+
   await Hive.initFlutter();
   Hive.registerAdapter(MessageAdapter());
-  Hive.registerAdapter(ShopAdapter());
+  Hive.registerAdapter(BusinessAdapter());
 
   // Hive
   //   ..initFlutter()
@@ -23,7 +23,7 @@ void main() async {
   //   ..registerAdapter(ShopAdapter());
 
   await Hive.openBox<Message>('messageBox');
-  await Hive.openBox<Shop>('shopBox');
+  await Hive.openBox<Business>('businessBox');
 
   runApp(MultiProvider(
     providers: [

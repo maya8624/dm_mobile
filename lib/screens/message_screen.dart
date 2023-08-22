@@ -1,24 +1,31 @@
+import 'package:dm_mobile/models/message/message.dart';
+import 'package:dm_mobile/utils/message_types.dart';
 import 'package:dm_mobile/widgets/message_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/message_notifier.dart';
+import '../view_models/summary_view.dart';
 import '../widgets/customer_register.dart';
 
-class MessageListScreen extends StatefulWidget {
-  const MessageListScreen({super.key});
+class MessageScreen extends StatefulWidget {
+  const MessageScreen({super.key});
 
   @override
-  State<MessageListScreen> createState() => _MessageListScreenState();
+  State<MessageScreen> createState() => _MessageScreenState();
 }
 
-class _MessageListScreenState extends State<MessageListScreen> {
+class _MessageScreenState extends State<MessageScreen> {
   @override
   Widget build(BuildContext context) {
-    final _count = Provider.of<MessageNotifier>(context).length;
+    var summary = Provider.of<MessageNotifier>(context).getSummary();
+    var messages = Provider.of<MessageNotifier>(context).getMessages();
+    final count = messages.length;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
+
       // bottomNavigationBar: BottomNavigationBar(
       //   backgroundColor: Colors.blue[800],
       //   items: [
@@ -68,7 +75,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
                   Container(
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade900,
+                      color: Color.fromRGBO(29, 39, 58, 100),
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
@@ -101,7 +108,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
                               style: TextStyle(color: Colors.white),
                             ),
                             Text(
-                              "2",
+                              summary.prepTotal.toString(),
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
@@ -127,7 +134,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
                               style: TextStyle(color: Colors.white),
                             ),
                             Text(
-                              "3",
+                              summary.sentTotal.toString(),
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
@@ -153,33 +160,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
                               style: TextStyle(color: Colors.white),
                             ),
                             Text(
-                              "1",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.all(16),
-                              child: Center(
-                                child: Icon(
-                                  Icons.delete_forever_outlined,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Deleted",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              "1",
+                              summary.completedTotal.toString(),
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
@@ -205,7 +186,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
                               style: TextStyle(color: Colors.white),
                             ),
                             Text(
-                              "5",
+                              summary.grandTotal.toString(),
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
@@ -251,22 +232,37 @@ class _MessageListScreenState extends State<MessageListScreen> {
                     topLeft: Radius.circular(30),
                     topRight: Radius.circular(30),
                   ),
-                  color: Colors.black,
                 ),
-                child: _count <= 0
+                child: count <= 0
                     ? const Text(
                         "No Data Found",
                         style: TextStyle(color: Colors.white),
                       )
                     : ListView.builder(
-                        itemCount:
-                            _count, // context.watch<CustomerNotifier>().length,
+                        itemCount: count,
                         itemBuilder: (context, index) {
-                          var messages =
-                              // Provider.of<CustomerNotifier>(context).getMessages();
-                              context.watch<MessageNotifier>().getMessages();
-
-                          return MessageList(message: messages[index]);
+                          return Slidable(
+                              endActionPane: ActionPane(
+                                motion: const ScrollMotion(),
+                                children: [
+                                  SlidableAction(
+                                    // An action can be bigger than the others.
+                                    flex: 2,
+                                    onPressed: (context) {
+                                      final key = messages[index].key;
+                                      final Message message = _onDismissed(key);
+                                      context
+                                          .read<MessageNotifier>()
+                                          .updateItem(key, message);
+                                    },
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.check_circle_outline,
+                                    label: 'Complete',
+                                  ),
+                                ],
+                              ),
+                              child: MessageList(message: messages[index]));
                         },
                       ),
               ),
@@ -275,5 +271,15 @@ class _MessageListScreenState extends State<MessageListScreen> {
         ),
       ),
     );
+  }
+
+  Message _onDismissed(int key) {
+    final message = MessageNotifier().getOriginalMessage(key);
+    if (message == null) {
+      throw Exception("Message not found");
+    }
+
+    message.messageType = MessageTypes.completed;
+    return message;
   }
 }

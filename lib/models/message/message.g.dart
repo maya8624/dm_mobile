@@ -17,19 +17,20 @@ class MessageAdapter extends TypeAdapter<Message> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Message(
+      messageType: fields[0] as int,
       mobile: fields[1] as String,
       name: fields[2] as String,
       orderNo: fields[3] as String,
     )
-      ..messageType = fields[0] as int
-      ..createdAt = fields[4] as DateTime
-      ..updatedAt = fields[5] as DateTime;
+      ..isSent = fields[4] as bool?
+      ..createdAt = fields[5] as DateTime
+      ..updatedAt = fields[6] as DateTime;
   }
 
   @override
   void write(BinaryWriter writer, Message obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.messageType)
       ..writeByte(1)
@@ -39,8 +40,10 @@ class MessageAdapter extends TypeAdapter<Message> {
       ..writeByte(3)
       ..write(obj.orderNo)
       ..writeByte(4)
-      ..write(obj.createdAt)
+      ..write(obj.isSent)
       ..writeByte(5)
+      ..write(obj.createdAt)
+      ..writeByte(6)
       ..write(obj.updatedAt);
   }
 

@@ -1,6 +1,7 @@
 import 'package:bcrypt/bcrypt.dart';
-import 'package:dm_mobile/providers/shop_provider.dart';
-import 'package:dm_mobile/screens/message_list_screen.dart';
+import 'package:dm_mobile/controllers/business_controller.dart';
+import 'package:dm_mobile/screens/message_screen.dart';
+import 'package:dm_mobile/screens/business_register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
@@ -17,14 +18,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
   final focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
 
-  bool _verifyPin(String? pinEntered) {
+  bool _verifyPasscode(String? pinEntered) {
     if (pinEntered == null || pinEntered.length < 4) return false;
 
-    final provider = ShopProvider();
-    final shop = provider.getShop();
-    if (shop == null) return false;
+    final businessController = BusinessController();
+    final business = businessController.getBusiness();
+    if (business == null) return false;
 
-    final bool isPinCorrect = BCrypt.checkpw(pinEntered, shop.pin);
+    final bool isPinCorrect = BCrypt.checkpw(pinEntered, business.passcode);
     if (!isPinCorrect) return false;
 
     return true;
@@ -75,16 +76,19 @@ class _VerificationScreenState extends State<VerificationScreen> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: Colors.grey[300],
+        // backgroundColor: Colors.grey[300],
+        backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
         body: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Verification Code',
+                'Enter your passcode',
                 style: GoogleFonts.urbanist(
-                    fontSize: 30, fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold),
               ),
               SizedBox(height: height * 0.05),
               SizedBox(
@@ -100,15 +104,15 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   focusedPinTheme: focusedPinTheme,
                   focusNode: focusNode,
                   validator: (value) {
-                    final isVerified = _verifyPin(value);
+                    final isVerified = _verifyPasscode(value);
                     if (isVerified == false) {
                       pinController.clear();
-                      return 'pin is incorrect or not registered yet';
+                      return 'Passcode is incorrect or not registered yet';
                     }
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MessageListScreen(),
+                        builder: (context) => MessageScreen(),
                       ),
                     );
                     return null;
@@ -116,14 +120,18 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   hapticFeedbackType: HapticFeedbackType.lightImpact,
                 ),
               ),
-              // TextButton(
-              //   onPressed: () {
-              //     verifyPin("123");
-              //     focusNode.unfocus();
-              //     formKey.currentState!.validate();
-              //   },
-              //   child: const Text('Validate'),
-              // ),
+              SizedBox(height: height * 0.05),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const BusinessRegisterScreen(),
+                    ),
+                  );
+                },
+                child: const Text('Register yet?'),
+              ),
             ],
           ),
         ));

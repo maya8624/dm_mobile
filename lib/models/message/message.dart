@@ -18,12 +18,16 @@ class Message {
   String orderNo;
 
   @HiveField(4)
-  DateTime createdAt = DateTime.now().toUtc();
+  bool? isSent;
 
   @HiveField(5)
+  DateTime createdAt = DateTime.now().toUtc();
+
+  @HiveField(6)
   DateTime updatedAt = DateTime.now().toUtc();
 
   Message({
+    required this.messageType,
     required this.mobile,
     required this.name,
     required this.orderNo,

@@ -1,18 +1,28 @@
 import 'dart:io';
 
+import 'package:dm_mobile/services/permission_service.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 
-class SMSController {
-  //TODO: if the device Android, sendDirect = true
+import '../providers/message_notifier.dart';
+
+class SMSService {
   Future<String> sendSms(String message, List<String> recipients) async {
-    var sendDirect = Platform.isAndroid ? true : false;
+    final sendDirect = Platform.isAndroid ? true : false;
     String result;
+
+    if (sendDirect == true) {
+      final permission = await PermissionService().requestSMSPermission();
+      if (permission != true) {
+        return "SMS permission is not granted";
+      }
+    }
 
     try {
       result = await sendSMS(
           message: message, recipients: recipients, sendDirect: sendDirect);
+      final messageNotifier = MessageNotifier();
     } catch (e) {
-      result = e.toString();
+      result = "SMS failed to send";
     }
     return result;
   }

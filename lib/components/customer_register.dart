@@ -14,11 +14,6 @@ class CustomRegisterModal extends StatefulWidget {
 }
 
 class _CustomRegisterModalState extends State<CustomRegisterModal> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   // final _mobileController = TextEditingController();
   // final _nameController = TextEditingController();
   // final _orderNoController = TextEditingController();
@@ -129,7 +124,7 @@ class _CustomRegisterModalState extends State<CustomRegisterModal> {
     final CustomerModal modal = CustomerModal();
     return FloatingActionButton(
       onPressed: () => modal.showRegisterForm(context, null),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.green,
       child: const Icon(
         Icons.add,
         color: Colors.black,

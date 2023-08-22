@@ -186,7 +186,7 @@ class _ListViewTestState extends State<ListViewTest> {
                     // listview of exercises
                     Expanded(
                       child: ListView(
-                        children: const [
+                        children: [
                           ExerciseTitle(
                               icon: Icons.favorite,
                               exerciseName: "0422 230 861, Andy Jung",
@@ -204,6 +204,27 @@ class _ListViewTestState extends State<ListViewTest> {
                             numberOfExercises: 20,
                             color: Colors.pink,
                           ),
+                          SizedBox(
+                            height: 50,
+                            width: 10,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                              child: Icon(Icons.vibration),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.vibration),
+                            ),
+                          )
                         ],
                       ),
                     )

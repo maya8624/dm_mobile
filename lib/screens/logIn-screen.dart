@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
-import '../models/shop/shop.dart';
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
