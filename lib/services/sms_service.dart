@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dm_mobile/services/permission_service.dart';
 import 'package:flutter_sms/flutter_sms.dart';
 
-import '../providers/message_notifier.dart';
+import '../providers/message_provider.dart';
 
 class SMSService {
   Future<String> sendSms(String message, List<String> recipients) async {
@@ -20,7 +20,7 @@ class SMSService {
     try {
       result = await sendSMS(
           message: message, recipients: recipients, sendDirect: sendDirect);
-      final messageNotifier = MessageNotifier();
+      final provider = MessageProvider();
     } catch (e) {
       result = "SMS failed to send";
     }

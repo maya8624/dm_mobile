@@ -1,7 +1,7 @@
 import 'package:cron/cron.dart';
 import 'package:dm_mobile/services/http_service.dart';
 
-import '../providers/message_notifier.dart';
+import '../providers/message_provider.dart';
 import '../utils/constants.dart';
 
 class CronService {
@@ -14,7 +14,7 @@ class CronService {
   }
 
   Future<void> customerSchedule() async {
-    var jsonString = MessageNotifier().getCustomers();
+    var jsonString = MessageProvider().getCustomers();
     var httpService =
         HttpService(endpoint: customerServiceBus, body: jsonString);
     await httpService.post();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/message_notifier.dart';
+import '../providers/message_provider.dart';
 import '../models/message/message.dart';
 import '../utils/message_types.dart';
 
@@ -15,7 +15,8 @@ class CustomerModal {
 
   void showRegisterForm(BuildContext ctx, int? key) {
     if (key != null) {
-      var message = ctx.read<MessageNotifier>().getMessage(key);
+      var message = MessageProvider().getMessage(key);
+      // var message = ctx.read<MessageNotifier>().getMessage(key);
 
       _mobileController.text = message.mobile;
       _nameController.text = message.name;
@@ -23,9 +24,7 @@ class CustomerModal {
     }
 
     showModalBottomSheet(
-      // backgroundColor: Color.fromARGB(255, 6, 6, 10),
       backgroundColor: Colors.black,
-      // backgroundColor: const Color.fromRGBO(29, 39, 58, 100),
       context: ctx,
       elevation: 5,
       isScrollControlled: true,
@@ -150,10 +149,10 @@ class CustomerModal {
                       );
 
                       if (key == null) {
-                        context.read<MessageNotifier>().addItem(message);
+                        context.read<MessageProvider>().addItem(message);
                       } else {
                         context
-                            .read<MessageNotifier>()
+                            .read<MessageProvider>()
                             .updateItem(key, message);
                       }
 

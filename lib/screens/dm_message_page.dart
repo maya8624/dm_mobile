@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
 import '../utils/dimensions.dart';
-import '../widgets/big_text.dart';
-import '../widgets/icon_and_text_widget.dart';
-import '../widgets/small_text.dart';
+import '../components/texts/big_text.dart';
+import '../components/icon_and_text_widget.dart';
+import '../components/texts/small_text.dart';
 
 class DMMessagePage extends StatefulWidget {
   const DMMessagePage({super.key});

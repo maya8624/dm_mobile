@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-import 'providers/message_notifier.dart';
+import 'providers/message_provider.dart';
 import 'models/message/message.dart';
 
 Future<void> main() async {
@@ -28,7 +28,7 @@ Future<void> main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
-        create: (context) => MessageNotifier(),
+        create: (context) => MessageProvider(),
       ),
     ],
     child: const MyApp(),

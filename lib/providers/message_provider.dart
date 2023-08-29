@@ -7,11 +7,12 @@ import 'package:hive_flutter/adapters.dart';
 import '../models/customer.dart';
 import '../models/message/message.dart';
 import '../utils/message_types.dart';
-import '../view_models/messaage_view.dart';
+import '../view_models/message_view.dart';
 
-class MessageNotifier extends ChangeNotifier {
+class MessageProvider with ChangeNotifier {
   final Box<Message> boxMessages = Hive.box<Message>("messageBox");
   int get length => boxMessages.length;
+  final List<MessageView> _messages = [];
 
   Future<void> addItem(Message item) async {
     await boxMessages.add(item);
@@ -27,12 +28,6 @@ class MessageNotifier extends ChangeNotifier {
     await boxMessages.put(key, item);
     notifyListeners();
   }
-
-  //  Future<void> updateMessageStatus(int key, MessageTypes types) async {
-
-  //   await boxMessages.put(key, item);
-  //   notifyListeners();
-  // }
 
   MessageView getMessage(int key) {
     final message = boxMessages.getAt(key);
@@ -65,11 +60,33 @@ class MessageNotifier extends ChangeNotifier {
           createdAt: message.createdAt,
           updatedAt: message.updatedAt);
     });
+
     return messages
         .where((element) => element.messageType != MessageTypes.completed)
         .toList()
         .reversed
         .toList();
+  }
+
+  List<MessageView> getMessagesByMessageType(int? messageType) {
+    final messages = boxMessages.keys.map((key) {
+      final message = boxMessages.get(key);
+      return MessageView(
+          key: key,
+          messageType: message!.messageType,
+          mobile: message.mobile,
+          name: message.name,
+          orderNo: message.orderNo,
+          createdAt: message.createdAt,
+          updatedAt: message.updatedAt);
+    });
+
+    final data = messageType == null
+        ? messages
+            .where((element) => element.messageType != MessageTypes.completed)
+        : messages.where((element) => element.messageType == messageType);
+
+    return data.toList().reversed.toList();
   }
 
   String getCustomers() {

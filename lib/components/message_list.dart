@@ -1,9 +1,12 @@
+import 'package:dm_mobile/components/texts/medium_text.dart';
+import 'package:dm_mobile/utils/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../services/sms_service.dart';
-import '../providers/message_notifier.dart';
+import '../providers/message_provider.dart';
 import '../utils/message_types.dart';
-import '../view_models/messaage_view.dart';
+import '../utils/wordings.dart';
+import '../view_models/message_view.dart';
 import 'customer_modal.dart';
 
 class MessageList extends StatefulWidget {
@@ -19,6 +22,7 @@ class MessageList extends StatefulWidget {
 }
 
 class _MessageListState extends State<MessageList> {
+//TODO: refactor - combine the three methods into one
   IconData _getStatusIcon(int messageType) {
     switch (messageType) {
       case MessageTypes.prep:
@@ -49,6 +53,19 @@ class _MessageListState extends State<MessageList> {
     }
   }
 
+  String _getStatusWording(int messageType) {
+    switch (messageType) {
+      case MessageTypes.prep:
+        return Wordings.prep;
+      case MessageTypes.sent:
+        return Wordings.sent;
+      case MessageTypes.completed:
+        return Wordings.completed;
+      default:
+        return Wordings.error;
+    }
+  }
+
   Future<void> _textCustomer(String mobile) async {
     final smsController = SMSService();
     final List<String> recipients = <String>[mobile];
@@ -57,7 +74,7 @@ class _MessageListState extends State<MessageList> {
   }
 
   Future<void> _updateMessageType(MessageView messageView) async {
-    final messageNotifier = MessageNotifier();
+    final messageNotifier = MessageProvider();
     final message = messageNotifier.getOriginalMessage(messageView.key);
     if (message == null) {
       throw Exception("Message not found");
@@ -79,8 +96,7 @@ class _MessageListState extends State<MessageList> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 1),
       child: Container(
-        // height: 90,
-        padding: const EdgeInsets.all(15),
+        padding: EdgeInsets.all(Dimensions.width15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
@@ -90,7 +106,7 @@ class _MessageListState extends State<MessageList> {
               blurRadius: 0,
             ),
           ],
-          color: Color.fromRGBO(29, 39, 58, 100),
+          color: const Color.fromRGBO(29, 39, 58, 100),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,39 +138,33 @@ class _MessageListState extends State<MessageList> {
                         widget.message.key,
                       );
                     },
-                    child: Text(
-                      "${widget.message.mobile} ${widget.message.name}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: MediumText(
+                      text: "${widget.message.mobile} ${widget.message.name}",
+                      size: Dimensions.font18,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: Dimensions.height5),
                   Text(
-                    "Order No: ${widget.message.orderNo}",
-                    style: const TextStyle(
+                    "${Wordings.orderNo} : ${widget.message.orderNo}",
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 13,
+                      fontSize: Dimensions.font16,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: Dimensions.height5),
                   Row(
                     children: [
-                      const Text(
-                        "Prep:",
-                        style: TextStyle(color: Colors.white),
+                      MediumText(
+                        text: _getStatusWording(widget.message.messageType),
+                        size: Dimensions.font16,
                       ),
-                      const SizedBox(width: 3),
-                      Text(
-                        DateFormat.jms()
+                      SizedBox(width: Dimensions.width5),
+                      MediumText(
+                        text: DateFormat.jms()
                             .format(widget.message.createdAt.toLocal()),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: _getStatusColor(widget.message.messageType),
-                          fontWeight: FontWeight.bold,
-                        ),
+                        size: Dimensions.font16,
+                        color: _getStatusColor(widget.message.messageType),
+                        fontWeight: FontWeight.bold,
                       ),
                     ],
                   ),

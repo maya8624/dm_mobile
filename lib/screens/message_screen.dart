@@ -1,16 +1,19 @@
 import 'package:dm_mobile/models/message/message.dart';
 import 'package:dm_mobile/utils/message_types.dart';
-import 'package:dm_mobile/widgets/message_list.dart';
+import 'package:dm_mobile/components/message_list.dart';
+import 'package:dm_mobile/utils/wordings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/message_notifier.dart';
-import '../view_models/summary_view.dart';
-import '../widgets/customer_register.dart';
+import '../components/messages/summary_top.dart';
+import '../providers/message_provider.dart';
+import '../view_models/message_view.dart';
+import 'customer_add_screen.dart';
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({super.key});
+  MessageScreen({super.key});
+  List<MessageView> messages = [];
 
   @override
   State<MessageScreen> createState() => _MessageScreenState();
@@ -19,9 +22,16 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   @override
   Widget build(BuildContext context) {
-    var summary = Provider.of<MessageNotifier>(context).getSummary();
-    var messages = Provider.of<MessageNotifier>(context).getMessages();
+    final provider = MessageProvider();
+    final messages = provider.getMessages();
+    final summary = provider.getSummary();
     final count = messages.length;
+
+    context.watch<MessageView>();
+    // final provider = context.watch<MessageProvider>();
+    // final summary = provider.getSummary();
+    // final messages = provider.getMessages();
+    // final count = messages.length;
 
     return Scaffold(
       backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
@@ -54,7 +64,7 @@ class _MessageScreenState extends State<MessageScreen> {
       //   backgroundColor: Colors.green,
       // title: const Text("SMS List"),
       // ),
-      floatingActionButton: CustomRegisterModal(),
+      floatingActionButton: CustomerAddScreen(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       body: SafeArea(
         child: Column(
@@ -87,109 +97,30 @@ class _MessageScreenState extends State<MessageScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.green,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.all(16),
-                              child: Center(
-                                child: Icon(
-                                  Icons.restart_alt_outlined,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Prep",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              summary.prepTotal.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
+                        SummaryTop(
+                          containerColor: Colors.green,
+                          icon: Icons.restart_alt_outlined,
+                          total: summary.prepTotal,
+                          wording: Wordings.prep,
                         ),
-                        Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.orange[600],
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.all(16),
-                              child: Center(
-                                child: Icon(
-                                  Icons.mark_chat_read_outlined,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Sent",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              summary.sentTotal.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
+                        SummaryTop(
+                          containerColor: Colors.orange.shade600,
+                          icon: Icons.mark_chat_read_outlined,
+                          total: summary.sentTotal,
+                          wording: Wordings.sent,
                         ),
-                        Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.redAccent,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.all(16),
-                              child: Center(
-                                child: Icon(
-                                  Icons.task_alt_outlined,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Completed",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              summary.completedTotal.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
+                        SummaryTop(
+                          containerColor: Colors.redAccent,
+                          icon: Icons.task_alt_outlined,
+                          total: summary.completedTotal,
+                          wording: Wordings.completed,
                         ),
-                        Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 7, 161, 167),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.all(16),
-                              child: Center(
-                                child: Icon(
-                                  Icons.add_circle_outline,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              "Total",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              summary.grandTotal.toString(),
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
+                        SummaryTop(
+                          containerColor:
+                              const Color.fromARGB(255, 7, 161, 167),
+                          icon: Icons.add_circle_outline,
+                          total: summary.grandTotal,
+                          wording: Wordings.total,
                         ),
                       ],
                     ),
@@ -197,31 +128,25 @@ class _MessageScreenState extends State<MessageScreen> {
                 ],
               ),
             ),
-            // SizedBox(height: 5),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     SizedBox(width: 20),
-            //     Icon(
-            //       Icons.list,
-            //       color: Colors.white,
-            //     ),
-            //     SizedBox(width: 10),
-            //     Text(
-            //       'Message List',
-            //       style: TextStyle(
-            //           color: Colors.white,
-            //           fontSize: 18,
-            //           fontWeight: FontWeight.bold),
-            //     ),
-            //     SizedBox(width: 10),
-            //     Icon(
-            //       Icons.arrow_upward,
-            //       color: Colors.white,
-            //       size: 20,
-            //     ),
-            //   ],
-            // ),
+            SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 20),
+                Icon(
+                  Icons.list,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Message List',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
             const SizedBox(height: 10),
             Expanded(
               child: Container(
@@ -252,7 +177,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                       final key = messages[index].key;
                                       final Message message = _onDismissed(key);
                                       context
-                                          .read<MessageNotifier>()
+                                          .read<MessageProvider>()
                                           .updateItem(key, message);
                                     },
                                     backgroundColor: Colors.red,
@@ -274,7 +199,7 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   Message _onDismissed(int key) {
-    final message = MessageNotifier().getOriginalMessage(key);
+    final message = MessageProvider().getOriginalMessage(key);
     if (message == null) {
       throw Exception("Message not found");
     }
