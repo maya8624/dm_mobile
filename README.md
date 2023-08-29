@@ -1,4 +1,5 @@
-# dm_mobile
+# mobile app
 
-Flutter mobile app project.
+# Environment 
+ - Flutter, Dart
 
