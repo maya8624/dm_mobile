@@ -1,4 +1,4 @@
-# mobile app
+# Mobile app
 
 # Environment 
  - Flutter, Dart
