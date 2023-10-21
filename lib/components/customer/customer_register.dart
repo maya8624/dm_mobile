@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/message_provider.dart';
-import '../models/message/message.dart';
-import '../components/customer_modal.dart';
+import 'customer_modal.dart';
 
-class CustomerAddScreen extends StatefulWidget {
-  const CustomerAddScreen({
+class CustomerRegister extends StatefulWidget {
+  const CustomerRegister({
     super.key,
   });
 
   @override
-  State<CustomerAddScreen> createState() => _CustomerAddScreenState();
+  State<CustomerRegister> createState() => _CustomerRegisterState();
 }
 
-class _CustomerAddScreenState extends State<CustomerAddScreen> {
+class _CustomerRegisterState extends State<CustomerRegister> {
   @override
   Widget build(BuildContext context) {
     final CustomerModal modal = CustomerModal();
+
     return FloatingActionButton(
       onPressed: () => modal.showRegisterForm(context, null),
       backgroundColor: Colors.green,

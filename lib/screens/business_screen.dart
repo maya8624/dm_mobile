@@ -5,15 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
-class BusinessRegisterScreen extends StatefulWidget {
+import '../utils/dimensions.dart';
+
+class BusinessScreen extends StatefulWidget {
   final int? businessKey;
-  const BusinessRegisterScreen({super.key, this.businessKey});
+  const BusinessScreen({super.key, this.businessKey});
 
   @override
-  State<BusinessRegisterScreen> createState() => _BusinessRegisterScreenState();
+  State<BusinessScreen> createState() => _BusinessScreenState();
 }
 
-class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
+class _BusinessScreenState extends State<BusinessScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _suburbController = TextEditingController();
@@ -107,9 +109,14 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
         title: const Text("Business Register"),
         backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
       ),
-      backgroundColor: Color.fromRGBO(18, 23, 50, 100),
+      backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
       body: Container(
-        margin: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+        margin: EdgeInsets.fromLTRB(
+          Dimensions.width10,
+          Dimensions.height20,
+          Dimensions.width10,
+          Dimensions.height10,
+        ),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
@@ -126,7 +133,9 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                   maxLength: 100,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(
+                          Dimensions.radius10,
+                        ),
                       ),
                       hintText: "Business Name",
                       hintStyle: const TextStyle(color: Colors.white),
@@ -144,7 +153,8 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                   maxLength: 50,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius:
+                            BorderRadius.circular(Dimensions.radius10),
                       ),
                       hintText: "Suburb",
                       hintStyle: const TextStyle(color: Colors.white),
@@ -162,7 +172,8 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                   maxLength: 50,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius:
+                            BorderRadius.circular(Dimensions.radius10),
                       ),
                       hintText: "Owner",
                       hintStyle: const TextStyle(color: Colors.white),
@@ -175,13 +186,16 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter email';
                     }
+                    return null;
                   },
                   style: const TextStyle(color: Colors.white),
                   maxLength: 100,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(
+                          Dimensions.radius10,
+                        ),
                       ),
                       hintText: "Email",
                       hintStyle: const TextStyle(color: Colors.white),
@@ -194,13 +208,16 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter mobile';
                     }
+                    return null;
                   },
                   style: const TextStyle(color: Colors.white),
                   maxLength: 15,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(
+                          Dimensions.radius10,
+                        ),
                       ),
                       hintText: "Mobile",
                       hintStyle: const TextStyle(color: Colors.white),
@@ -213,6 +230,7 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter passcode';
                     }
+                    return null;
                   },
                   style: const TextStyle(color: Colors.white),
                   maxLength: 4,
@@ -220,7 +238,8 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                   obscureText: true,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius:
+                            BorderRadius.circular(Dimensions.radius10),
                       ),
                       hintText: "Passcode (4 digit numbers)",
                       hintStyle: const TextStyle(color: Colors.white),
@@ -240,7 +259,9 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                   obscureText: true,
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(
+                          Dimensions.radius10,
+                        ),
                       ),
                       hintText: "Confirm Passcode",
                       hintStyle: const TextStyle(color: Colors.white),
@@ -251,15 +272,16 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                     _passcodeConfirmation(value);
                   },
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: Dimensions.height20),
                 SizedBox(
-                  height: 60,
+                  height: Dimensions.height60,
                   width: 400,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green[700],
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius:
+                            BorderRadius.circular(Dimensions.radius15),
                       ),
                     ),
                     onPressed: () async {
@@ -280,10 +302,12 @@ class _BusinessRegisterScreenState extends State<BusinessRegisterScreen> {
                         );
                       }
                     },
-                    child: const Text(
+                    child: Text(
                       "Register",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                        fontSize: Dimensions.font18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),

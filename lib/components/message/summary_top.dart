@@ -1,9 +1,5 @@
-import 'package:dm_mobile/models/message/message.dart';
-import 'package:dm_mobile/utils/message_types.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../providers/message_provider.dart';
 import '../../utils/dimensions.dart';
 
 class SummaryTop extends StatelessWidget {

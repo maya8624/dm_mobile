@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dm_mobile/utils/colors.dart';
-import 'package:dm_mobile/components/texts/small_text.dart';
+import 'package:dm_mobile/components/text/small_text.dart';
 
 import '../../utils/dimensions.dart';
 

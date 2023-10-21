@@ -1,10 +1,13 @@
 import 'package:bcrypt/bcrypt.dart';
 import 'package:dm_mobile/controllers/business_controller.dart';
 import 'package:dm_mobile/screens/message_screen.dart';
-import 'package:dm_mobile/screens/business_register_screen.dart';
+import 'package:dm_mobile/screens/business_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
+
+import '../utils/dimensions.dart';
+import '../utils/wordings.dart';
 
 class VerificationScreen extends StatefulWidget {
   const VerificationScreen({super.key});
@@ -76,64 +79,66 @@ class _VerificationScreenState extends State<VerificationScreen> {
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        // backgroundColor: Colors.grey[300],
-        backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Enter your passcode',
-                style: GoogleFonts.urbanist(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: height * 0.05),
-              SizedBox(
-                width: width,
-                child: Pinput(
-                  controller: pinController,
-                  obscureText: true,
-                  obscuringCharacter: '*',
-                  length: 4,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  defaultPinTheme: defaultPinTheme,
-                  focusedPinTheme: focusedPinTheme,
-                  focusNode: focusNode,
-                  validator: (value) {
-                    final isVerified = _verifyPasscode(value);
-                    if (isVerified == false) {
-                      pinController.clear();
-                      return 'Passcode is incorrect or not registered yet';
-                    }
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MessageScreen(),
-                      ),
-                    );
-                    return null;
-                  },
-                  hapticFeedbackType: HapticFeedbackType.lightImpact,
-                ),
-              ),
-              SizedBox(height: height * 0.05),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
+      // backgroundColor: Colors.grey[300],
+      backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              Wordings.validatePasscodeMessage,
+              style: GoogleFonts.urbanist(
+                  color: Colors.white,
+                  fontSize: Dimensions.font30,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: height * 0.05),
+            SizedBox(
+              width: width,
+              child: Pinput(
+                controller: pinController,
+                obscureText: true,
+                obscuringCharacter: '*',
+                length: 4,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                defaultPinTheme: defaultPinTheme,
+                focusedPinTheme: focusedPinTheme,
+                focusNode: focusNode,
+                validator: (value) {
+                  final isVerified = _verifyPasscode(value);
+                  if (isVerified == false) {
+                    pinController.clear();
+                    return 'Passcode is incorrect or not registered yet';
+                  }
+                  //TODO: replace with Get.off???
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const BusinessRegisterScreen(),
+                      builder: (context) => MessageScreen(),
                     ),
                   );
+                  return null;
                 },
-                child: const Text('Register yet?'),
+                hapticFeedbackType: HapticFeedbackType.lightImpact,
               ),
-            ],
-          ),
-        ));
+            ),
+            SizedBox(height: height * 0.05),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BusinessScreen(),
+                  ),
+                );
+              },
+              child: const Text('Register yet?'),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

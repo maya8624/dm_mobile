@@ -1,32 +1,53 @@
 import 'dart:convert';
 
-import 'package:dm_mobile/view_models/summary_view.dart';
-import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 
-import '../models/customer.dart';
+import '../models/customer/customer.dart';
 import '../models/message/message.dart';
 import '../utils/message_types.dart';
 import '../view_models/message_view.dart';
+import '../view_models/summary_view.dart';
 
-class MessageProvider with ChangeNotifier {
+class MessageController extends GetxController {
   final Box<Message> boxMessages = Hive.box<Message>("messageBox");
   int get length => boxMessages.length;
-  final List<MessageView> _messages = [];
+
+  RxList<MessageView> _messages = <MessageView>[].obs;
+  RxList<MessageView> get messages => _messages.reversed.toList().obs;
+
+  Rx<SummaryView> _summary =
+      SummaryView(prepTotal: 0, sentTotal: 0, completedTotal: 0, grandTotal: 0)
+          .obs;
+
+  Rx<SummaryView> get summary => _summary.obs.value;
 
   Future<void> addItem(Message item) async {
-    await boxMessages.add(item);
-    notifyListeners();
+    final key = await boxMessages.add(item);
+    final message = getMessage(key);
+    _messages.add(message);
+    getSummary();
   }
 
   Future<void> deleteItem(int key) async {
+    // final message = getMessage(key);
+    _messages.removeWhere((element) => element.key == key);
     await boxMessages.delete(key);
-    notifyListeners();
+    getSummary();
   }
 
-  Future<void> updateItem(int key, Message item) async {
-    await boxMessages.put(key, item);
-    notifyListeners();
+  Future<void> updateItem(int key, Message updatedMessage) async {
+    await boxMessages.put(key, updatedMessage);
+
+    if (updatedMessage.messageType == MessageTypes.completed) {
+      _messages.removeWhere((element) => element.key == key);
+    } else {
+      final message = getMessage(key);
+      final index = _messages.indexWhere((element) => element.key == key);
+      _messages[index] = message;
+    }
+
+    getSummary();
   }
 
   MessageView getMessage(int key) {
@@ -47,9 +68,8 @@ class MessageProvider with ChangeNotifier {
     return message;
   }
 
-  //TODO:
-  List<MessageView> getMessages() {
-    final messages = boxMessages.keys.map((key) {
+  void getMessages() {
+    final data = boxMessages.keys.map((key) {
       final message = boxMessages.get(key);
       return MessageView(
           key: key,
@@ -61,32 +81,11 @@ class MessageProvider with ChangeNotifier {
           updatedAt: message.updatedAt);
     });
 
-    return messages
+    var messages = data
         .where((element) => element.messageType != MessageTypes.completed)
-        .toList()
-        .reversed
         .toList();
-  }
 
-  List<MessageView> getMessagesByMessageType(int? messageType) {
-    final messages = boxMessages.keys.map((key) {
-      final message = boxMessages.get(key);
-      return MessageView(
-          key: key,
-          messageType: message!.messageType,
-          mobile: message.mobile,
-          name: message.name,
-          orderNo: message.orderNo,
-          createdAt: message.createdAt,
-          updatedAt: message.updatedAt);
-    });
-
-    final data = messageType == null
-        ? messages
-            .where((element) => element.messageType != MessageTypes.completed)
-        : messages.where((element) => element.messageType == messageType);
-
-    return data.toList().reversed.toList();
+    _messages = RxList<MessageView>.from(messages);
   }
 
   String getCustomers() {
@@ -102,7 +101,7 @@ class MessageProvider with ChangeNotifier {
     return jsonString;
   }
 
-  SummaryView getSummary() {
+  void getSummary() {
     final messages = boxMessages.values;
     final prepTotal =
         messages.where((x) => x.messageType == MessageTypes.prep).length;
@@ -115,12 +114,12 @@ class MessageProvider with ChangeNotifier {
 
     final grandTotal = messages.length;
 
-    final summary = SummaryView(
+    final result = SummaryView(
         prepTotal: prepTotal,
         sentTotal: sentTotal,
         completedTotal: completedTotal,
         grandTotal: grandTotal);
 
-    return summary;
+    _summary = Rx<SummaryView>(result);
   }
 }

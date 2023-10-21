@@ -1,38 +1,47 @@
 import 'package:dm_mobile/models/message/message.dart';
+import 'package:dm_mobile/utils/dimensions.dart';
 import 'package:dm_mobile/utils/message_types.dart';
-import 'package:dm_mobile/components/message_list.dart';
-import 'package:dm_mobile/utils/wordings.dart';
+import 'package:dm_mobile/components/message/message_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
-import '../components/messages/summary_top.dart';
-import '../providers/message_provider.dart';
+import '../components/message/message_summary.dart';
+import '../controllers/message_controller.dart';
+import '../utils/wordings.dart';
 import '../view_models/message_view.dart';
-import 'customer_add_screen.dart';
+import '../components/customer/customer_register.dart';
 
 class MessageScreen extends StatefulWidget {
   MessageScreen({super.key});
-  List<MessageView> messages = [];
+  final List<MessageView> messages = [];
 
   @override
   State<MessageScreen> createState() => _MessageScreenState();
 }
 
 class _MessageScreenState extends State<MessageScreen> {
+  MessageController mController = Get.find();
+  @override
+  void initState() {
+    super.initState();
+    mController.getMessages();
+    mController.getSummary();
+  }
+
+  Message _onDismissed(int key, MessageController controller) {
+    final message = controller.getOriginalMessage(key);
+    if (message == null) {
+      throw Exception("Message not found");
+    }
+
+    message.messageType = MessageTypes.completed;
+    return message;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final provider = MessageProvider();
-    final messages = provider.getMessages();
-    final summary = provider.getSummary();
-    final count = messages.length;
-
-    context.watch<MessageView>();
-    // final provider = context.watch<MessageProvider>();
-    // final summary = provider.getSummary();
-    // final messages = provider.getMessages();
-    // final count = messages.length;
-
     return Scaffold(
       backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
 
@@ -64,147 +73,116 @@ class _MessageScreenState extends State<MessageScreen> {
       //   backgroundColor: Colors.green,
       // title: const Text("SMS List"),
       // ),
-      floatingActionButton: CustomerAddScreen(),
+      floatingActionButton: const CustomerRegister(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    '23 Jan, 2021',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(29, 39, 58, 100),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.grey.shade800,
-                            offset: Offset(0, 0.5),
-                            blurRadius: 0),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SummaryTop(
-                          containerColor: Colors.green,
-                          icon: Icons.restart_alt_outlined,
-                          total: summary.prepTotal,
-                          wording: Wordings.prep,
-                        ),
-                        SummaryTop(
-                          containerColor: Colors.orange.shade600,
-                          icon: Icons.mark_chat_read_outlined,
-                          total: summary.sentTotal,
-                          wording: Wordings.sent,
-                        ),
-                        SummaryTop(
-                          containerColor: Colors.redAccent,
-                          icon: Icons.task_alt_outlined,
-                          total: summary.completedTotal,
-                          wording: Wordings.completed,
-                        ),
-                        SummaryTop(
-                          containerColor:
-                              const Color.fromARGB(255, 7, 161, 167),
-                          icon: Icons.add_circle_outline,
-                          total: summary.grandTotal,
-                          wording: Wordings.total,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+        child: Obx(
+          () {
+            final summary = mController.summary.value;
+            final List<MessageView> messageList = mController.messages.toList();
+            return Column(
               children: [
-                SizedBox(width: 20),
-                Icon(
-                  Icons.list,
-                  color: Colors.white,
+                Padding(
+                  padding: EdgeInsets.all(Dimensions.height10),
+                  child: Column(
+                    children: [
+                      Text(
+                        DateFormat.yMMMEd().format(DateTime.now()),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: Dimensions.font20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: Dimensions.height10),
+                      Container(
+                        padding: EdgeInsets.all(Dimensions.height10),
+                        decoration: BoxDecoration(
+                          color: const Color.fromRGBO(29, 39, 58, 100),
+                          borderRadius:
+                              BorderRadius.circular(Dimensions.radius12),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade800,
+                                offset: const Offset(0, 0.5),
+                                blurRadius: 0),
+                          ],
+                        ),
+                        child: MessageSummary(summary: summary),
+                      ),
+                    ],
+                  ),
                 ),
-                SizedBox(width: 10),
-                Text(
-                  'Message List',
-                  style: TextStyle(
+                SizedBox(height: Dimensions.height5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(width: Dimensions.width20),
+                    const Icon(
+                      Icons.list,
                       color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: Dimensions.width10),
+                    Text(
+                      'Message List',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Dimensions.font16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: Dimensions.height10),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: Dimensions.width5),
+                    padding: EdgeInsets.only(top: Dimensions.height5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(Dimensions.radius30),
+                        topRight: Radius.circular(Dimensions.radius30),
+                      ),
+                    ),
+                    child: messageList.isEmpty
+                        ? const Text(
+                            Wordings.noDataFound,
+                            style: TextStyle(color: Colors.white),
+                          )
+                        : ListView.builder(
+                            itemCount: messageList.length,
+                            itemBuilder: (context, index) {
+                              return Slidable(
+                                endActionPane: ActionPane(
+                                  motion: const ScrollMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      // An action can be bigger than the others.
+                                      flex: 2,
+                                      onPressed: (context) {
+                                        final key = messageList[index].key;
+                                        final Message message =
+                                            _onDismissed(key, mController);
+                                        mController.updateItem(key, message);
+                                      },
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      icon: Icons.check_circle_outline,
+                                      label: Wordings.labelComplete,
+                                    ),
+                                  ],
+                                ),
+                                child: MessageList(message: messageList[index]),
+                              );
+                            },
+                          ),
+                  ),
                 ),
               ],
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                padding: const EdgeInsets.only(top: 5),
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                child: count <= 0
-                    ? const Text(
-                        "No Data Found",
-                        style: TextStyle(color: Colors.white),
-                      )
-                    : ListView.builder(
-                        itemCount: count,
-                        itemBuilder: (context, index) {
-                          return Slidable(
-                              endActionPane: ActionPane(
-                                motion: const ScrollMotion(),
-                                children: [
-                                  SlidableAction(
-                                    // An action can be bigger than the others.
-                                    flex: 2,
-                                    onPressed: (context) {
-                                      final key = messages[index].key;
-                                      final Message message = _onDismissed(key);
-                                      context
-                                          .read<MessageProvider>()
-                                          .updateItem(key, message);
-                                    },
-                                    backgroundColor: Colors.red,
-                                    foregroundColor: Colors.white,
-                                    icon: Icons.check_circle_outline,
-                                    label: 'Complete',
-                                  ),
-                                ],
-                              ),
-                              child: MessageList(message: messages[index]));
-                        },
-                      ),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
-  }
-
-  Message _onDismissed(int key) {
-    final message = MessageProvider().getOriginalMessage(key);
-    if (message == null) {
-      throw Exception("Message not found");
-    }
-
-    message.messageType = MessageTypes.completed;
-    return message;
   }
 }

@@ -1,7 +1,7 @@
-import 'package:dm_mobile/components/texts/small_text.dart';
+import 'package:dm_mobile/components/text/small_text.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/dimensions.dart';
+import '../../utils/dimensions.dart';
 
 class IconAndTextWidget extends StatelessWidget {
   final IconData icon;

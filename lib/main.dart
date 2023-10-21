@@ -1,12 +1,11 @@
 import 'package:cron/cron.dart';
+import 'package:dm_mobile/helper/init_dependency.dart';
 import 'package:dm_mobile/models/business/business.dart';
 import 'package:dm_mobile/screens/verification_screen.dart';
 import 'package:dm_mobile/services/cron_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:provider/provider.dart';
-import 'providers/message_provider.dart';
 import 'models/message/message.dart';
 
 Future<void> main() async {
@@ -25,14 +24,7 @@ Future<void> main() async {
   await Hive.openBox<Message>('messageBox');
   await Hive.openBox<Business>('businessBox');
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (context) => MessageProvider(),
-      ),
-    ],
-    child: const MyApp(),
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -42,12 +34,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      initialBinding: InitDep(),
+      initialRoute: "/",
+      getPages: [
+        GetPage(
+          name: "/",
+          page: () => const VerificationScreen(),
+        ),
+      ],
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: VerificationScreen(),
+      home: const VerificationScreen(),
     );
   }
 }

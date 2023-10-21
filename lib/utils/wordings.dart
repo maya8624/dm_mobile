@@ -6,6 +6,10 @@ class Wordings {
   static const String total = "Total";
   static const String error = "Error";
   static const String orderNo = "Order No";
+  static const String noDataFound = "No data found";
+  static const String labelComplete = "Complete";
+  static const String validatePasscodeMessage = "Enter your passcode";
+
   // static const String error = "Error";
   // static const String error = "Error";
   // static const String error = "Error";

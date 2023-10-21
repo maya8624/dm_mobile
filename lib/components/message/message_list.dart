@@ -1,13 +1,14 @@
-import 'package:dm_mobile/components/texts/medium_text.dart';
+import 'package:dm_mobile/components/text/medium_text.dart';
 import 'package:dm_mobile/utils/dimensions.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import '../services/sms_service.dart';
-import '../providers/message_provider.dart';
-import '../utils/message_types.dart';
-import '../utils/wordings.dart';
-import '../view_models/message_view.dart';
-import 'customer_modal.dart';
+import '../../controllers/message_controller.dart';
+import '../../services/sms_service.dart';
+import '../../utils/message_types.dart';
+import '../../utils/wordings.dart';
+import '../../view_models/message_view.dart';
+import '../customer/customer_modal.dart';
 
 class MessageList extends StatefulWidget {
   final MessageView message;
@@ -23,6 +24,8 @@ class MessageList extends StatefulWidget {
 
 class _MessageListState extends State<MessageList> {
 //TODO: refactor - combine the three methods into one
+  MessageController controller = Get.find();
+
   IconData _getStatusIcon(int messageType) {
     switch (messageType) {
       case MessageTypes.prep:
@@ -74,15 +77,14 @@ class _MessageListState extends State<MessageList> {
   }
 
   Future<void> _updateMessageType(MessageView messageView) async {
-    final messageNotifier = MessageProvider();
-    final message = messageNotifier.getOriginalMessage(messageView.key);
+    final message = controller.getOriginalMessage(messageView.key);
     if (message == null) {
       throw Exception("Message not found");
     }
 
     message.messageType = MessageTypes.sent;
     message.updatedAt = DateTime.now().toUtc();
-    await messageNotifier.updateItem(messageView.key, message);
+    await controller.updateItem(messageView.key, message);
   }
 
   @override
