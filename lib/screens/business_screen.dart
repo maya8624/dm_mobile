@@ -1,6 +1,7 @@
 import 'package:bcrypt/bcrypt.dart';
 import 'package:dm_mobile/models/business/business.dart';
 import 'package:dm_mobile/screens/message_screen.dart';
+import 'package:dm_mobile/utils/wordings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -26,6 +27,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
   final _confirmPasscodeController = TextEditingController();
 
   final _businessBox = Hive.box<Business>('businessBox');
+  bool _isUpdated = false;
 
   Future<void> _saveBusiness() async {
     final passcode1 = _passcodeController.text;
@@ -33,7 +35,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
     _verifyPasscode(passcode1, passcode2);
 
     final hashpasscode = _generateHashPasscode(passcode1);
-    var business = Business(
+    final business = Business(
       name: _nameController.text,
       suburb: _suburbController.text,
       owner: _ownerController.text,
@@ -46,17 +48,30 @@ class _BusinessScreenState extends State<BusinessScreen> {
   }
 
   void _getBusiness() {
-    var business = _businessBox.values.isEmpty ? null : _businessBox.getAt(0);
+    final business = _businessBox.values.isEmpty ? null : _businessBox.getAt(0);
     if (business != null) {
+      _isUpdated = true;
       _nameController.text = business.name;
       _suburbController.text = business.suburb;
       _ownerController.text = business.owner;
       _emailController.text = business.email;
+      _mobileController.text = business.mobile;
     }
   }
 
-  Future<void> _updateBusiness(int key, Business business) async {
-    await _businessBox.put(key, business);
+  Future<void> _updateBusiness() async {
+    final business = _businessBox.getAt(0);
+    if (business == null) print("business not found.");
+
+    var updatedBusiness = Business(
+        email: _emailController.text,
+        mobile: _mobileController.text,
+        name: _nameController.text,
+        owner: _ownerController.text,
+        suburb: _suburbController.text,
+        passcode: business!.passcode);
+
+    await _businessBox.putAt(0, updatedBusiness);
   }
 
   void _verifyPasscode(String passcode1, String passcode2) {
@@ -72,7 +87,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
   }
 
   void _passcodeConfirmation(String confirmPasscode) {
-    var passcode = _passcodeController.text;
+    final passcode = _passcodeController.text;
     if (confirmPasscode.length == 4 && passcode != confirmPasscode) {
       Get.snackbar(
         "passcode",
@@ -224,53 +239,60 @@ class _BusinessScreenState extends State<BusinessScreen> {
                       filled: true,
                       fillColor: const Color.fromRGBO(29, 39, 58, 100)),
                 ),
-                TextFormField(
-                  controller: _passcodeController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter passcode';
-                    }
-                    return null;
-                  },
-                  style: const TextStyle(color: Colors.white),
-                  maxLength: 4,
-                  keyboardType: TextInputType.number,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(Dimensions.radius10),
-                      ),
-                      hintText: "Passcode (4 digit numbers)",
-                      hintStyle: const TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: const Color.fromRGBO(29, 39, 58, 100)),
-                ),
-                TextFormField(
-                  controller: _confirmPasscodeController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter confirm passcode';
-                    }
-                  },
-                  style: const TextStyle(color: Colors.white),
-                  maxLength: 4,
-                  keyboardType: TextInputType.number,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          Dimensions.radius10,
+                Visibility(
+                  visible: _isUpdated ? false : true,
+                  child: TextFormField(
+                    controller: _passcodeController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter passcode';
+                      }
+                      return null;
+                    },
+                    style: const TextStyle(color: Colors.white),
+                    maxLength: 4,
+                    keyboardType: TextInputType.number,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(Dimensions.radius10),
                         ),
-                      ),
-                      hintText: "Confirm Passcode",
-                      hintStyle: const TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: const Color.fromRGBO(29, 39, 58, 100)),
-                  onChanged: (String value) {
-                    //OR showDialog instead of snackbar
-                    _passcodeConfirmation(value);
-                  },
+                        hintText: "Passcode (4 digit numbers)",
+                        hintStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: const Color.fromRGBO(29, 39, 58, 100)),
+                  ),
+                ),
+                Visibility(
+                  visible: _isUpdated ? false : true,
+                  child: TextFormField(
+                    controller: _confirmPasscodeController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter confirm passcode';
+                      }
+                      return null;
+                    },
+                    style: const TextStyle(color: Colors.white),
+                    maxLength: 4,
+                    keyboardType: TextInputType.number,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            Dimensions.radius10,
+                          ),
+                        ),
+                        hintText: "Confirm Passcode",
+                        hintStyle: const TextStyle(color: Colors.white),
+                        filled: true,
+                        fillColor: const Color.fromRGBO(29, 39, 58, 100)),
+                    onChanged: (String value) {
+                      //OR showDialog instead of snackbar
+                      _passcodeConfirmation(value);
+                    },
+                  ),
                 ),
                 SizedBox(height: Dimensions.height20),
                 SizedBox(
@@ -284,9 +306,9 @@ class _BusinessScreenState extends State<BusinessScreen> {
                             BorderRadius.circular(Dimensions.radius15),
                       ),
                     ),
-                    onPressed: () async {
+                    onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        _saveBusiness();
+                        _isUpdated ? _updateBusiness() : _saveBusiness();
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -294,7 +316,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
                           ),
                         );
 
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => MessageScreen(),
@@ -303,7 +325,7 @@ class _BusinessScreenState extends State<BusinessScreen> {
                       }
                     },
                     child: Text(
-                      "Register",
+                      _isUpdated ? Wordings.update : Wordings.register,
                       style: TextStyle(
                         fontSize: Dimensions.font18,
                         fontWeight: FontWeight.w700,

@@ -96,11 +96,12 @@ class _MessageListState extends State<MessageList> {
 //               child: CircularProgressIndicator(),
 //             )
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 1),
+      padding: EdgeInsets.symmetric(
+          vertical: Dimensions.height5, horizontal: Dimensions.width5),
       child: Container(
         padding: EdgeInsets.all(Dimensions.width15),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(Dimensions.radius10),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.shade700,
@@ -118,17 +119,17 @@ class _MessageListState extends State<MessageList> {
               height: 60,
               width: 60,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(Dimensions.radius15),
                 color: _getStatusColor(widget.message.messageType),
               ),
               child: Icon(
                 _getStatusIcon(widget.message.messageType),
                 color: Colors.white,
-                size: 40,
+                size: 30,
               ),
             ),
             Container(
-              padding: const EdgeInsets.only(left: 10),
+              padding: EdgeInsets.only(left: Dimensions.height10),
               width: MediaQuery.of(context).size.width * 0.6,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,18 +211,18 @@ class _MessageListState extends State<MessageList> {
                     );
                   },
                 ),
-                IconButton(
-                  constraints: BoxConstraints(maxHeight: 30),
-                  icon: const Icon(
-                    Icons.vibration,
-                    color: Colors.white,
-                  ),
-                  tooltip: "Call customer",
-                  onPressed: () async {
-                    //TODO: implementd call customer
-                    // await _textCustomer(message.mobile);
-                  },
-                ),
+                // IconButton(
+                //   constraints: BoxConstraints(maxHeight: 30),
+                //   icon: const Icon(
+                //     Icons.vibration,
+                //     color: Colors.white,
+                //   ),
+                //   tooltip: "Call customer",
+                //   onPressed: () async {
+                //     //TODO: implementd call customer
+                //     // await _textCustomer(message.mobile);
+                //   },
+                // ),
               ],
             ),
           ],

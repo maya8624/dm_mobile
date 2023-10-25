@@ -1,4 +1,3 @@
-import 'package:cron/cron.dart';
 import 'package:dm_mobile/helper/init_dependency.dart';
 import 'package:dm_mobile/models/business/business.dart';
 import 'package:dm_mobile/screens/verification_screen.dart';
@@ -37,10 +36,7 @@ class MyApp extends StatelessWidget {
       initialBinding: InitDep(),
       initialRoute: "/",
       getPages: [
-        GetPage(
-          name: "/",
-          page: () => const VerificationScreen(),
-        ),
+        GetPage(name: "/", page: () => const VerificationScreen()),
       ],
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',

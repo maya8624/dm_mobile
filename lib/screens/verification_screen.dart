@@ -112,7 +112,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     pinController.clear();
                     return 'Passcode is incorrect or not registered yet';
                   }
-                  //TODO: replace with Get.off???
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(

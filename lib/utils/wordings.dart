@@ -9,6 +9,8 @@ class Wordings {
   static const String noDataFound = "No data found";
   static const String labelComplete = "Complete";
   static const String validatePasscodeMessage = "Enter your passcode";
+  static const String register = "Register";
+  static const String update = "Update";
 
   // static const String error = "Error";
   // static const String error = "Error";

@@ -1,4 +1,6 @@
 import 'package:dm_mobile/models/message/message.dart';
+import 'package:dm_mobile/screens/business_screen.dart';
+import 'package:dm_mobile/screens/verification_screen.dart';
 import 'package:dm_mobile/utils/dimensions.dart';
 import 'package:dm_mobile/utils/message_types.dart';
 import 'package:dm_mobile/components/message/message_list.dart';
@@ -42,145 +44,223 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+        ),
 
-      // bottomNavigationBar: BottomNavigationBar(
-      //   backgroundColor: Colors.blue[800],
-      //   items: [
-      //     BottomNavigationBarItem(
-      //         icon: Icon(
-      //           Icons.home,
-      //           color: Colors.white,
-      //         ),
-      //         label: 'home'),
-      //     BottomNavigationBarItem(
-      //         icon: Icon(
-      //           Icons.add,
-      //           color: Colors.white,
-      //         ),
-      //         label: 'Order'),
-      // BottomNavigationBarItem(
-      //     icon: Icon(
-      //       Icons.person,
-      //       color: Colors.white,
-      //     ),
-      //     label: 'User',
-      // ),
-      // ],
-      // ),
-      // appBar: AppBar(
-      //   backgroundColor: Colors.green,
-      // title: const Text("SMS List"),
-      // ),
-      floatingActionButton: const CustomerRegister(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      body: SafeArea(
-        child: Obx(
-          () {
-            final summary = mController.summary.value;
-            final List<MessageView> messageList = mController.messages.toList();
-            return Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(Dimensions.height10),
-                  child: Column(
+        backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
+        drawer: Drawer(
+          backgroundColor: const Color.fromRGBO(18, 23, 50, 100),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              // const DrawerHeader(
+              //   decoration: BoxDecoration(
+              //     color: const Color.fromRGBO(18, 23, 50, 100),
+              //   ),
+              //   child: Text(
+              //     "Drawer Header",
+              //     style: TextStyle(color: Colors.white),
+              //   ),
+              // ),
+              SizedBox(
+                height: Dimensions.height5,
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.home_outlined,
+                  color: Colors.white,
+                ),
+                title: const Text(
+                  "Home",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Get.to(const VerificationScreen());
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.business_outlined,
+                  color: Colors.white,
+                ),
+                title: const Text(
+                  "Edit Business",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Get.to(const BusinessScreen());
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.message_outlined,
+                  color: Colors.white,
+                ),
+                title: const Text(
+                  "Message List",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  Get.to(MessageScreen());
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.settings_outlined,
+                  color: Colors.white,
+                ),
+                title: const Text(
+                  "Settings",
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
+        // bottomNavigationBar: BottomNavigationBar(
+        //   backgroundColor: Colors.blue[800],
+        //   items: [
+        //     BottomNavigationBarItem(
+        //         icon: Icon(
+        //           Icons.home,
+        //           color: Colors.white,
+        //         ),
+        //         label: 'home'),
+        //     BottomNavigationBarItem(
+        //         icon: Icon(
+        //           Icons.add,
+        //           color: Colors.white,
+        //         ),
+        //         label: 'Order'),
+        // BottomNavigationBarItem(
+        //     icon: Icon(
+        //       Icons.person,
+        //       color: Colors.white,
+        //     ),
+        //     label: 'User',
+        // ),
+        // ],
+        // ),
+        // appBar: AppBar(
+        //   backgroundColor: Colors.green,
+        // title: const Text("SMS List"),
+        // ),
+        floatingActionButton: const CustomerRegister(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        body: SafeArea(
+          child: Obx(
+            () {
+              final summary = mController.summary.value;
+              final List<MessageView> messageList =
+                  mController.messages.toList();
+              return Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(Dimensions.height10),
+                    child: Column(
+                      children: [
+                        Text(
+                          DateFormat.yMMMEd().format(DateTime.now()),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: Dimensions.font20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: Dimensions.height10),
+                        Container(
+                          padding: EdgeInsets.all(Dimensions.height10),
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(29, 39, 58, 100),
+                            borderRadius:
+                                BorderRadius.circular(Dimensions.radius12),
+                            boxShadow: [
+                              BoxShadow(
+                                  color: Colors.grey.shade800,
+                                  offset: const Offset(0, 0.5),
+                                  blurRadius: 0),
+                            ],
+                          ),
+                          child: MessageSummary(summary: summary),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: Dimensions.height5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      SizedBox(width: Dimensions.width20),
+                      const Icon(
+                        Icons.list,
+                        color: Colors.white,
+                      ),
+                      SizedBox(width: Dimensions.width10),
                       Text(
-                        DateFormat.yMMMEd().format(DateTime.now()),
+                        'Message List',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: Dimensions.font20,
+                          fontSize: Dimensions.font16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: Dimensions.height10),
-                      Container(
-                        padding: EdgeInsets.all(Dimensions.height10),
-                        decoration: BoxDecoration(
-                          color: const Color.fromRGBO(29, 39, 58, 100),
-                          borderRadius:
-                              BorderRadius.circular(Dimensions.radius12),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey.shade800,
-                                offset: const Offset(0, 0.5),
-                                blurRadius: 0),
-                          ],
-                        ),
-                        child: MessageSummary(summary: summary),
-                      ),
                     ],
                   ),
-                ),
-                SizedBox(height: Dimensions.height5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(width: Dimensions.width20),
-                    const Icon(
-                      Icons.list,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: Dimensions.width10),
-                    Text(
-                      'Message List',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: Dimensions.font16,
-                        fontWeight: FontWeight.bold,
+                  SizedBox(height: Dimensions.height10),
+                  Expanded(
+                    child: Container(
+                      margin:
+                          EdgeInsets.symmetric(horizontal: Dimensions.width5),
+                      padding: EdgeInsets.only(top: Dimensions.height5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(Dimensions.radius30),
+                          topRight: Radius.circular(Dimensions.radius30),
+                        ),
                       ),
+                      child: messageList.isEmpty
+                          ? const Text(
+                              Wordings.noDataFound,
+                              style: TextStyle(color: Colors.white),
+                            )
+                          : ListView.builder(
+                              itemCount: messageList.length,
+                              itemBuilder: (context, index) {
+                                return Slidable(
+                                  endActionPane: ActionPane(
+                                    motion: const ScrollMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        // An action can be bigger than the others.
+                                        flex: 2,
+                                        onPressed: (context) {
+                                          final key = messageList[index].key;
+                                          final Message message =
+                                              _onDismissed(key, mController);
+                                          mController.updateItem(key, message);
+                                        },
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.check_circle_outline,
+                                        label: Wordings.labelComplete,
+                                      ),
+                                    ],
+                                  ),
+                                  child:
+                                      MessageList(message: messageList[index]),
+                                );
+                              },
+                            ),
                     ),
-                  ],
-                ),
-                SizedBox(height: Dimensions.height10),
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: Dimensions.width5),
-                    padding: EdgeInsets.only(top: Dimensions.height5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(Dimensions.radius30),
-                        topRight: Radius.circular(Dimensions.radius30),
-                      ),
-                    ),
-                    child: messageList.isEmpty
-                        ? const Text(
-                            Wordings.noDataFound,
-                            style: TextStyle(color: Colors.white),
-                          )
-                        : ListView.builder(
-                            itemCount: messageList.length,
-                            itemBuilder: (context, index) {
-                              return Slidable(
-                                endActionPane: ActionPane(
-                                  motion: const ScrollMotion(),
-                                  children: [
-                                    SlidableAction(
-                                      // An action can be bigger than the others.
-                                      flex: 2,
-                                      onPressed: (context) {
-                                        final key = messageList[index].key;
-                                        final Message message =
-                                            _onDismissed(key, mController);
-                                        mController.updateItem(key, message);
-                                      },
-                                      backgroundColor: Colors.red,
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.check_circle_outline,
-                                      label: Wordings.labelComplete,
-                                    ),
-                                  ],
-                                ),
-                                child: MessageList(message: messageList[index]),
-                              );
-                            },
-                          ),
                   ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
