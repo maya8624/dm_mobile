@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import '../../controllers/message_controller.dart';
 import '../../models/message/message.dart';
 import '../../utils/message_types.dart';
-import 'customer_text_field.dart';
+import '../common/common_text_field.dart';
 
 class CustomerModal {
   final int count = 0;
@@ -53,21 +53,21 @@ class CustomerModal {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              CustomerTextField(
+              CommonTextField(
                 hintText: "Mobile",
                 message: "Please enter mobile number",
                 lengthLimit: 15,
                 textEditController: _mobileController,
               ),
               SizedBox(height: Dimensions.height10),
-              CustomerTextField(
+              CommonTextField(
                 hintText: "Name",
                 message: "Please enter name",
                 lengthLimit: 30,
                 textEditController: _nameController,
               ),
               SizedBox(height: Dimensions.height10),
-              CustomerTextField(
+              CommonTextField(
                 hintText: "Order No",
                 message: "PPlease enter order number",
                 lengthLimit: 10,

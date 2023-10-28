@@ -2,13 +2,13 @@ import 'package:dm_mobile/utils/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CustomerTextField extends StatelessWidget {
+class BusinessTextField extends StatelessWidget {
   final String hintText;
   final int lengthLimit;
   final String message;
   final TextEditingController textEditController;
 
-  const CustomerTextField({
+  const BusinessTextField({
     super.key,
     required this.hintText,
     required this.lengthLimit,

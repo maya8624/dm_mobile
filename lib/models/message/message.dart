@@ -21,10 +21,10 @@ class Message {
   bool? isSent;
 
   @HiveField(5)
-  DateTime createdAt = DateTime.now().toUtc();
+  DateTime createdAt = DateTime.now();
 
   @HiveField(6)
-  DateTime updatedAt = DateTime.now().toUtc();
+  DateTime updatedAt = DateTime.now();
 
   Message({
     required this.messageType,

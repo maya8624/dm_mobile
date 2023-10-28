@@ -1,4 +1,5 @@
 import 'package:bcrypt/bcrypt.dart';
+import 'package:dm_mobile/components/common/common_text_field.dart';
 import 'package:dm_mobile/models/business/business.dart';
 import 'package:dm_mobile/screens/message_screen.dart';
 import 'package:dm_mobile/utils/wordings.dart';
@@ -32,16 +33,15 @@ class _BusinessScreenState extends State<BusinessScreen> {
   Future<void> _saveBusiness() async {
     final passcode1 = _passcodeController.text;
     final passcode2 = _confirmPasscodeController.text;
-    _verifyPasscode(passcode1, passcode2);
+    final hashPasscode = _generateHashPasscode(passcode1);
 
-    final hashpasscode = _generateHashPasscode(passcode1);
     final business = Business(
       name: _nameController.text,
       suburb: _suburbController.text,
       owner: _ownerController.text,
       email: _emailController.text,
       mobile: _mobileController.text,
-      passcode: hashpasscode,
+      passcode: hashPasscode,
     );
 
     await _businessBox.add(business);
@@ -74,8 +74,11 @@ class _BusinessScreenState extends State<BusinessScreen> {
     await _businessBox.putAt(0, updatedBusiness);
   }
 
-  void _verifyPasscode(String passcode1, String passcode2) {
-    if (passcode1 != passcode2) {
+  bool _verifyPasscode() {
+    final passcode = _passcodeController.text;
+    final confirmPasscode = _confirmPasscodeController.text;
+
+    if (passcode != confirmPasscode) {
       Get.snackbar(
         "passcode",
         "passcode and confirm passcode must be the same",
@@ -83,7 +86,9 @@ class _BusinessScreenState extends State<BusinessScreen> {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+      return false;
     }
+    return true;
   }
 
   void _passcodeConfirmation(String confirmPasscode) {
@@ -137,164 +142,78 @@ class _BusinessScreenState extends State<BusinessScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                TextFormField(
-                  controller: _nameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter business name';
-                    }
-                  },
-                  style: const TextStyle(color: Colors.white),
-                  maxLength: 100,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          Dimensions.radius10,
-                        ),
-                      ),
-                      hintText: "Business Name",
-                      hintStyle: const TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: const Color.fromRGBO(29, 39, 58, 100)),
+                CommonTextField(
+                  hintText: "Business Name",
+                  lengthLimit: 100,
+                  message: "Please enter business name",
+                  textEditController: _nameController,
+                  fillColor: const Color.fromRGBO(29, 39, 58, 100),
                 ),
-                TextFormField(
-                  controller: _suburbController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter suburb';
-                    }
-                  },
-                  style: const TextStyle(color: Colors.white),
-                  maxLength: 50,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(Dimensions.radius10),
-                      ),
-                      hintText: "Suburb",
-                      hintStyle: const TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: const Color.fromRGBO(29, 39, 58, 100)),
+                SizedBox(height: Dimensions.height15),
+                CommonTextField(
+                  hintText: "Suburb",
+                  lengthLimit: 50,
+                  message: "Please enter suburb",
+                  textEditController: _suburbController,
+                  fillColor: const Color.fromRGBO(29, 39, 58, 100),
                 ),
-                TextFormField(
-                  controller: _ownerController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter owner';
-                    }
-                  },
-                  style: const TextStyle(color: Colors.white),
-                  maxLength: 50,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(Dimensions.radius10),
-                      ),
-                      hintText: "Owner",
-                      hintStyle: const TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: const Color.fromRGBO(29, 39, 58, 100)),
+                SizedBox(height: Dimensions.height15),
+                CommonTextField(
+                  hintText: "Owner",
+                  lengthLimit: 50,
+                  message: "Please enter owner",
+                  textEditController: _ownerController,
+                  fillColor: const Color.fromRGBO(29, 39, 58, 100),
                 ),
-                TextFormField(
-                  controller: _emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter email';
-                    }
-                    return null;
-                  },
-                  style: const TextStyle(color: Colors.white),
-                  maxLength: 100,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          Dimensions.radius10,
-                        ),
-                      ),
-                      hintText: "Email",
-                      hintStyle: const TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: const Color.fromRGBO(29, 39, 58, 100)),
+                SizedBox(height: Dimensions.height15),
+                CommonTextField(
+                  hintText: "Email",
+                  lengthLimit: 100,
+                  message: "Please enter email",
+                  textEditController: _emailController,
+                  fillColor: const Color.fromRGBO(29, 39, 58, 100),
+                  keyboardType: TextInputType.emailAddress,
                 ),
-                TextFormField(
-                  controller: _mobileController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter mobile';
-                    }
-                    return null;
-                  },
-                  style: const TextStyle(color: Colors.white),
-                  maxLength: 15,
+                SizedBox(height: Dimensions.height15),
+                CommonTextField(
+                  hintText: "Mobile",
+                  lengthLimit: 15,
+                  message: "Please enter mobile",
+                  textEditController: _mobileController,
+                  fillColor: const Color.fromRGBO(29, 39, 58, 100),
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          Dimensions.radius10,
-                        ),
-                      ),
-                      hintText: "Mobile",
-                      hintStyle: const TextStyle(color: Colors.white),
-                      filled: true,
-                      fillColor: const Color.fromRGBO(29, 39, 58, 100)),
                 ),
+                SizedBox(height: Dimensions.height15),
                 Visibility(
                   visible: _isUpdated ? false : true,
-                  child: TextFormField(
-                    controller: _passcodeController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter passcode';
-                      }
-                      return null;
-                    },
-                    style: const TextStyle(color: Colors.white),
-                    maxLength: 4,
+                  child: CommonTextField(
+                    hintText: "Passcode (4 digit numbers)",
+                    lengthLimit: 4,
+                    message: "Please enter passcode",
+                    textEditController: _passcodeController,
+                    fillColor: const Color.fromRGBO(29, 39, 58, 100),
                     keyboardType: TextInputType.number,
                     obscureText: true,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(Dimensions.radius10),
-                        ),
-                        hintText: "Passcode (4 digit numbers)",
-                        hintStyle: const TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: const Color.fromRGBO(29, 39, 58, 100)),
                   ),
                 ),
+                SizedBox(height: Dimensions.height15),
                 Visibility(
                   visible: _isUpdated ? false : true,
-                  child: TextFormField(
-                    controller: _confirmPasscodeController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter confirm passcode';
-                      }
-                      return null;
-                    },
-                    style: const TextStyle(color: Colors.white),
-                    maxLength: 4,
+                  child: CommonTextField(
+                    hintText: "Confirm Passcod",
+                    lengthLimit: 4,
+                    message: "Please enter confirm passcode",
+                    textEditController: _confirmPasscodeController,
+                    fillColor: const Color.fromRGBO(29, 39, 58, 100),
                     keyboardType: TextInputType.number,
                     obscureText: true,
-                    decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            Dimensions.radius10,
-                          ),
-                        ),
-                        hintText: "Confirm Passcode",
-                        hintStyle: const TextStyle(color: Colors.white),
-                        filled: true,
-                        fillColor: const Color.fromRGBO(29, 39, 58, 100)),
                     onChanged: (String value) {
                       //OR showDialog instead of snackbar
                       _passcodeConfirmation(value);
                     },
                   ),
                 ),
-                SizedBox(height: Dimensions.height20),
+                SizedBox(height: Dimensions.height15),
                 SizedBox(
                   height: Dimensions.height60,
                   width: 400,
@@ -307,6 +226,9 @@ class _BusinessScreenState extends State<BusinessScreen> {
                       ),
                     ),
                     onPressed: () {
+                      final passcodeVerified = _verifyPasscode();
+                      if (passcodeVerified == false) return;
+
                       if (_formKey.currentState!.validate()) {
                         _isUpdated ? _updateBusiness() : _saveBusiness();
 

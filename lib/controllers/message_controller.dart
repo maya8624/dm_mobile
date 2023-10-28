@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
 
 import '../models/customer/customer.dart';
 import '../models/message/message.dart';
@@ -81,8 +82,14 @@ class MessageController extends GetxController {
           updatedAt: message.updatedAt);
     });
 
+    final year = DateTime.now().year;
+    final month = DateTime.now().month;
+    final day = DateTime.now().day;
+    final today = DateTime(year, month, day);
+
     var messages = data
         .where((element) => element.messageType != MessageTypes.completed)
+        .where((element) => element.createdAt.compareTo(today) >= 0)
         .toList();
 
     _messages = RxList<MessageView>.from(messages);

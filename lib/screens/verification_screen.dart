@@ -114,9 +114,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   }
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => MessageScreen(),
-                    ),
+                    MaterialPageRoute(builder: (context) => MessageScreen()),
                   );
                   return null;
                 },

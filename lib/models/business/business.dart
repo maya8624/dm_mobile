@@ -26,10 +26,10 @@ class Business {
   String passcode;
 
   @HiveField(7)
-  DateTime createdAt = DateTime.now().toUtc();
+  DateTime createdAt = DateTime.now();
 
   @HiveField(8)
-  DateTime updatedAt = DateTime.now().toUtc();
+  DateTime updatedAt = DateTime.now();
 
   Business({
     required this.email,
