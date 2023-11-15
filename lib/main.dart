@@ -1,9 +1,17 @@
 import 'package:dm_mobile/helper/init_dependency.dart';
 import 'package:dm_mobile/models/business/business.dart';
+import 'package:dm_mobile/routs.dart';
+import 'package:dm_mobile/screens/profile/profile_screen.dart';
+import 'package:dm_mobile/screens/settings_screen.dart';
+import 'package:dm_mobile/screens/splash/splash_screen.dart';
 import 'package:dm_mobile/screens/verification_screen.dart';
 import 'package:dm_mobile/services/cron_service.dart';
+import 'package:dm_mobile/theme.dart';
+import 'package:dm_mobile/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'models/message/message.dart';
 
@@ -34,16 +42,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialBinding: InitDep(),
-      initialRoute: "/",
-      getPages: [
-        GetPage(name: "/", page: () => const VerificationScreen()),
-      ],
+      initialRoute: SplashScreen.routeName,
+      routes: routes,
+      // initialRoute: "/",
+      // getPages: [
+      //   GetPage(name: "/", page: () => const VerificationScreen()),
+      // ],
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const VerificationScreen(),
+      title: 'Direct Message',
+      theme: theme(),
+      // home: const VerificationScreen(),
+      // home: const SettingsScreen(),
+      // home: const ProfileScreen(),
     );
   }
 }
